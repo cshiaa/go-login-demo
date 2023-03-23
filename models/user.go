@@ -6,7 +6,7 @@ import (
 	"strings"
 	"errors"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/cshiaa/go-login-demo/utils"

@@ -11,6 +11,14 @@ import (
 
 func main() {
 
+	//zap日志
+	// logger := zap.NewExample()
+	// defer logger.Sync()
+
+	// sugar := logger.Sugar()
+
+
+	//gin
 	models.ConnectDataBase()
 
 	router := gin.Default()
@@ -22,6 +30,9 @@ func main() {
 	protected := router.Group("/api/admin")
 	protected.Use(middlewares.JwtAuthMiddleware())
 	protected.GET("/user", controller.CurrentUser)
+	protected.GET("/menu", controller.GetMenuList)
+	protected.POST("/asyncMenu", controller.GetMenuList)
+
 	// Listen and Server in 0.0.0.0:8080
 	router.Run(":8089")
 }

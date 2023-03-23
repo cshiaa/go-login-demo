@@ -5,9 +5,11 @@ import (
 	"log"
 	"os"
 
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/joho/godotenv"
+	"gorm.io/driver/mysql"
+	_ "gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var DB *gorm.DB
@@ -28,7 +30,9 @@ func ConnectDataBase(){
 
 	DBURL := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", db_user, db_password, db_host, db_port, db_name)
 
-	DB, err = gorm.Open("mysql", DBURL)
+	DB, err = gorm.Open(mysql.Open(DBURL), &gorm.Config{
+		Logger:logger.Default.LogMode(logger.Info),
+	})
 	if err!= nil {
 		fmt.Println("Error opening database: %v", db_driver)
 		log.Fatalf("Error opening database: ", err)
@@ -36,5 +40,5 @@ func ConnectDataBase(){
 		fmt.Println("Connected to database: ", db_driver)
 	}
 
-	DB.AutoMigrate(&User{})
+	DB.AutoMigrate(&User{}, &Menu{}, &Role_Permissions{})
 }
