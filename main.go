@@ -33,6 +33,15 @@ func main() {
 	protected.GET("/menu", controller.GetMenuList)
 	protected.POST("/asyncMenu", controller.GetMenuList)
 
+	protectedUser := router.Group("/api/user")
+	{
+		protectedUser.GET("/list", controller.GetUserList)
+		protectedUser.GET("/add", controller.CurrentUser)
+	}
+
+	protectedUser.Use(middlewares.JwtAuthMiddleware())
+
+
 	// Listen and Server in 0.0.0.0:8080
 	router.Run(":8089")
 }

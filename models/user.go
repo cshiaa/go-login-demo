@@ -14,8 +14,13 @@ import (
 
 type User struct {
 	gorm.Model
-	Username string `json:"username" gorm:"size:30;not null;unique"`
-	Password string `json:"password" gorm:"size:255;not null;`
+	Username string `json:"username, omitempty" gorm:"size:30;not null;unique"`
+	Password string `json:"password, omitempty" gorm:"size:255;not null;`
+}
+
+type UserInfo struct {
+	ID        	uint `json:"id"` 
+	Username 	string `json:"username, omitempty"`
 }
 
 func (u *User) SaveUser() (*User, error) {
@@ -70,7 +75,7 @@ func LoginCheck(username string, password string) (atoken, rtoken string, err er
 	return atoken, rtoken, nil
 }
 
-func GetUserByID(uid uint) (User,error) {
+func GetUserByID(uid uint) (User, error) {
 
 	var u User
 
@@ -86,4 +91,11 @@ func GetUserByID(uid uint) (User,error) {
 
 func (u *User) PrepareGive(){
 	u.Password = ""
+}
+
+func GetAllUser() (users []UserInfo, err error) {
+	if err := DB.Table("users").Select("id", "username").Order("id").Find(&users).Error; err != nil {
+		return users,errors.New("User not found!")
+	}
+	return users,nil
 }
