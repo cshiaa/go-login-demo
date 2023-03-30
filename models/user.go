@@ -5,11 +5,12 @@ import (
 	"html"
 	"strings"
 	"errors"
-
+	"fmt"
 	"gorm.io/gorm"
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/cshiaa/go-login-demo/utils"
+	"github.com/cshiaa/go-login-demo/global"
 )
 
 type User struct {
@@ -26,7 +27,7 @@ type UserInfo struct {
 func (u *User) SaveUser() (*User, error) {
 
 	var err error
-	err = DB.Create(&u).Error
+	err = global.RY_DB.Create(&u).Error
 	if err!= nil {
 		return &User{}, err
 	}
@@ -57,8 +58,9 @@ func LoginCheck(username string, password string) (atoken, rtoken string, err er
 	// var err error
 
 	u := User{}
-
-	err = DB.Model(User{}).Where("username =?", username).Take(&u).Error
+	fmt.Println(username)
+	// err = DB.Where("username =?", username).Find(&User{}).Error
+	err = global.RY_DB.Model(User{}).Where("username = ?", username).Take(&u).Error
 	if err!= nil {
 		return "", "", err
 	}
@@ -72,6 +74,7 @@ func LoginCheck(username string, password string) (atoken, rtoken string, err er
 	if err != nil {
 		return "", "", err
 	}
+
 	return atoken, rtoken, nil
 }
 
@@ -79,7 +82,7 @@ func GetUserByID(uid uint) (User, error) {
 
 	var u User
 
-	if err := DB.First(&u,uid).Error; err != nil {
+	if err := global.RY_DB.First(&u,uid).Error; err != nil {
 		return u,errors.New("User not found!")
 	}
 
@@ -94,7 +97,7 @@ func (u *User) PrepareGive(){
 }
 
 func GetAllUser() (users []UserInfo, err error) {
-	if err := DB.Table("users").Select("id", "username").Order("id").Find(&users).Error; err != nil {
+	if err := global.RY_DB.Table("users").Select("id", "username").Order("id").Find(&users).Error; err != nil {
 		return users,errors.New("User not found!")
 	}
 	return users,nil

@@ -3,6 +3,8 @@ package models
 import (
 	"errors"
 	"gorm.io/gorm"
+
+	"github.com/cshiaa/go-login-demo/global"
 )
 
 type Menu struct {
@@ -20,31 +22,11 @@ type Menus struct {
 	Children []Menu	`json:"children"`
 }
 
-// func (m *Menus) FormatJSON() (string, error) {
-
-// 	menu, err := json.Marshal(m)
-// 	if err != nil {
-// 		return "", errors.New("Menus format error: " + err.Error())
-// 	}
-// 	menus := string(menu)
-
-// 	// child, err := json.Marshal(m.Children)
-// 	// if err != nil {
-// 	// 	return "", errors.New("Menus format error: " + err.Error())
-// 	// }
-// 	// childs := string(child)
-
-// 	fmt.Println(menus)
-
-// 	return "", nil
-
-// }
-
 func GetMenuID(uid uint) (menu []Menu, err error) {
 
 	// var menu Menu
 
-	if err := DB.Where("menu_type = ?", "0").Find(&menu).Error; err != nil {
+	if err := global.RY_DB.Where("menu_type = ?", "0").Find(&menu).Error; err != nil {
 		return menu, err
 	}
 	//menus := DB.Exec("SElECT id, icon, menuname, url FROM menus")
@@ -57,8 +39,8 @@ func GetMenuID(uid uint) (menu []Menu, err error) {
 //获取用户菜单
 func getUserPartentMenu(uid uint) (menu []Menu, err error) {
 
-	subQuery := DB.Select("menu_id").Where("user_id = ?  and module_id is null", uid).Table("role_permissions")
-	if err := DB.Where("menu_id in (?)", subQuery).Find(&menu).Error; err!= nil{
+	subQuery := global.RY_DB.Select("menu_id").Where("user_id = ?  and module_id is null", uid).Table("role_permissions")
+	if err := global.RY_DB.Where("menu_id in (?)", subQuery).Find(&menu).Error; err!= nil{
 		return menu, errors.New("User not found Permissions")
 	}
 
@@ -70,8 +52,8 @@ func getUserPartentMenu(uid uint) (menu []Menu, err error) {
 func getUserChildMenu(uid uint, menuId string) (menu []Menu, err error) {
 
 
-	subQuery := DB.Select("module_id").Where("user_id = ? and menu_id = ? and module_id is not null", uid, menuId).Table("role_permissions")
-	if err := DB.Where("menu_id in (?)", subQuery).Find(&menu).Error; err!= nil{
+	subQuery := global.RY_DB.Select("module_id").Where("user_id = ? and menu_id = ? and module_id is not null", uid, menuId).Table("role_permissions")
+	if err := global.RY_DB.Where("menu_id in (?)", subQuery).Find(&menu).Error; err!= nil{
 		return menu, errors.New("User not found Child Menu")
 	}
 	return menu, nil

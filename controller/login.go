@@ -6,7 +6,6 @@ import (
 	"github.com/cshiaa/go-login-demo/models"
 
 	"github.com/cshiaa/go-login-demo/utils"
-
 )
 
 
@@ -30,7 +29,6 @@ func Login(c *gin.Context) {
 	u.Password = input.Password
 
 	atoken, rtoken, err := models.LoginCheck(u.Username, u.Password)
-
 	if err!= nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Username or password is incorrect"})
             return
