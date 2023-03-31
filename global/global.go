@@ -16,5 +16,5 @@ var (
 	RY_DBList map[string]*gorm.DB
 	RY_VP     *viper.Viper
 	RY_LOG    *zap.Logger
-	RY_CONFIG *config.Server
+	RY_CONFIG config.Server
 )

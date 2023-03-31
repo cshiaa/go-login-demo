@@ -5,7 +5,7 @@ import (
 	"html"
 	"strings"
 	"errors"
-	"fmt"
+	
 	"gorm.io/gorm"
 	"golang.org/x/crypto/bcrypt"
 
@@ -58,7 +58,6 @@ func LoginCheck(username string, password string) (atoken, rtoken string, err er
 	// var err error
 
 	u := User{}
-	fmt.Println(username)
 	// err = DB.Where("username =?", username).Find(&User{}).Error
 	err = global.RY_DB.Model(User{}).Where("username = ?", username).Take(&u).Error
 	if err!= nil {

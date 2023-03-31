@@ -64,8 +64,8 @@ func main() {
 
 	protectedConfig := router.Group("/api/config")
 	{
-		protectedConfig.GET("/list", controller.CurrentUser)
-		protectedConfig.GET("/update", controller.CurrentUser)
+		protectedConfig.GET("/list", controller.GetConfigList)
+		protectedConfig.POST("/update", controller.UpadteConfigList)
 	}
 	protectedConfig.Use(middlewares.JwtAuthMiddleware())
 

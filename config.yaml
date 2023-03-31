@@ -1,19 +1,17 @@
-mysql:
-  host: 19.224.154.190
-  port: 3306
-  dbname: cshiaa
-  username: cshiaa
-  password: cshiaa
-  dirver: mysql
-
 jenkins:
-  url: http://localhost:8082
-  user: admin
-  password: 11dc5bf784c1a2554cf1a0b4160b92471a
-
+    url: http://localhost:8080
+    user: admin
+    password: 11dc5bf784c1a2554cf1a0b4160b92471a
+mysql:
+    dbname: cshiaa
+    dirver: mysql
+    host: 19.224.154.190
+    username: cshiaa
+    password: cshiaa
+    port: "3306"
 zap:
-  level: INFO
-  filename: ./log/cshiaa.log
-  maxsize: 10
-  maxage: 30
-  maxbackups: 3
+    level: INFO
+    filename: ./log/cshiaa.log
+    maxsize: 10
+    maxage: 30
+    maxbackups: 3
