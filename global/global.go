@@ -8,6 +8,8 @@ import (
 
 	"gorm.io/gorm"
 
+	"k8s.io/client-go/kubernetes"
+
 	"github.com/cshiaa/go-login-demo/source/config"
 )
 
@@ -17,4 +19,5 @@ var (
 	RY_VP     *viper.Viper
 	RY_LOG    *zap.Logger
 	RY_CONFIG config.Server
+	RY_CLIENTSET *kubernetes.Clientset
 )

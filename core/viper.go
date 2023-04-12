@@ -2,6 +2,8 @@ package core
 
 import (
 	"fmt"
+	
+	"go.uber.org/zap"
 
 	"github.com/spf13/viper"
 	"github.com/fsnotify/fsnotify"
@@ -22,13 +24,14 @@ func ViperInit() (*viper.Viper) {
 	v.WatchConfig()
 
 	v.OnConfigChange(func(e fsnotify.Event) {
+		global.RY_LOG.Info("配置文件更改", zap.String("configName", e.Name))
 		fmt.Println("config file changed:", e.Name)
 		if err = v.Unmarshal(&global.RY_CONFIG); err != nil {
-			fmt.Println(err)
+			global.RY_LOG.Error(err.Error())
 		}
 	})
 	if err = v.Unmarshal(&global.RY_CONFIG); err != nil {
-		fmt.Println(err)
+		global.RY_LOG.Error(err.Error())
 	}
 	return v
 }

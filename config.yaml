@@ -1,17 +1,23 @@
 jenkins:
-    url: http://localhost:8080
-    user: admin
     password: 11dc5bf784c1a2554cf1a0b4160b92471a
+    url: http://localhost:8082
+    user: admin
+kubernetes:
+    path: upload/config
 mysql:
     dbname: cshiaa
     dirver: mysql
     host: 19.224.154.190
-    username: cshiaa
     password: cshiaa
     port: "3306"
+    username: cshiaa
+storage:
+    local:
+        filepath: upload
+    type: local
 zap:
-    level: INFO
     filename: ./log/cshiaa.log
-    maxsize: 10
+    level: INFO
     maxage: 30
     maxbackups: 3
+    maxsize: 10

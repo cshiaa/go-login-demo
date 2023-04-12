@@ -69,7 +69,21 @@ func main() {
 	}
 	protectedConfig.Use(middlewares.JwtAuthMiddleware())
 
+	protectedFile := router.Group("/file")
+	{
+		protectedFile.POST("/upload", controller.UploadFile)
+		protectedFile.GET("/getFile", controller.GetFile)
 
+	}
+	protectedFile.Use(middlewares.JwtAuthMiddleware())
+
+	protectedKubernetes := router.Group("/kubernetes")
+	{
+		protectedKubernetes.GET("/version", controller.GetKubernetesVersion)
+		protectedKubernetes.GET("/resources/get", controller.GetKubernetesResource)
+
+	}
+	protectedKubernetes.Use(middlewares.JwtAuthMiddleware())
 	// Listen and Server in 0.0.0.0:8080
 	router.Run(":8089")
 }

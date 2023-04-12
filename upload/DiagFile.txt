@@ -1,0 +1,2 @@
+Warning: C++ S-function is not supported for model code generation because model target language is set to 'C'. To fix the issue, change model target language to 'C++'.
+Error: C:\Users\zwang238\Desktop\Chris_Work\Validation\FASST\Build005\Cx483MCA_DCV_ALC_NBP_vRelease\02_Components\CarMaker\NBP_OSC_ACU_HMIMsgSuppresion.cpp not found; check that you are in the correct current folder, and check the spelling of 'C:\Users\zwang238\Desktop\Chris_Work\Validation\FASST\Build005\Cx483MCA_DCV_ALC_NBP_vRelease\02_Components\CarMaker\NBP_OSC_ACU_HMIMsgSuppresion.cpp'.

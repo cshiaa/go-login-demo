@@ -9,12 +9,13 @@ import (
 
 type Menu struct {
 	gorm.Model
-	Icon string 	`json:"icon" gorm:"size:30;not null;unique"`
+	Icon string 	`json:"icon" gorm:"size:30;unique"`
 	Menuname string `json:"menuname" gorm:"size:255;not null;`
 	MenuUrl string 		`json:"url" gorm:"size:30;not null; default:''"`
 	MenuType int 		`json:"menutype" gorm:"size:4; not null;default:0"`
 	MenuId string 		`json:"menuId" gorm:"size:10; not null`
-	ParentId string     `json:"parentId" gorm:"size:10; "`
+	ParentId string     `json:"parentId" gorm:"size:10; not null"`
+	Name string 	`json:"name" gorm:"size:20; not null"`
 }
 
 type Menus struct {

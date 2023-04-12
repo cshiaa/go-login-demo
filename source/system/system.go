@@ -1,6 +1,7 @@
 package system
 
 import (
+
 	"github.com/cshiaa/go-login-demo/global"
 	"github.com/cshiaa/go-login-demo/source/config"
 	"github.com/cshiaa/go-login-demo/utils"
@@ -17,6 +18,7 @@ type SystemConfig struct {
 }
 
 func (systemConfig *SystemConfig) GetSystemConfig() (conf config.Server, err error) {
+	global.RY_LOG.Debug("获取系统配置信息")
 	return global.RY_CONFIG, nil
 }
 
