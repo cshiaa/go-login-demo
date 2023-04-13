@@ -18,12 +18,25 @@ func GetMenuList(c *gin.Context){
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	
-	menu, err := models.GetMenu(userId)
+
+	menu, err := models.GetUserMenu(userId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message":"success","menuList": menu})
+}
+
+
+func GetAllMenu(c *gin.Context) {
+
+	menu, err := models.GetMenu()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message":"success","menuList": menu})
+
 }

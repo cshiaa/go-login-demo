@@ -23,6 +23,16 @@ type Menus struct {
 	Children []Menu	`json:"children"`
 }
 
+type PermissionMenu struct {
+	Menuname string `json:"menuname"`
+	MenuId string 	`json:"menuId"`
+}
+
+type PermissionMenus struct {
+	PermissionMenu
+	Children []PermissionMenu `json:"children"`
+}
+
 func GetMenuID(uid uint) (menu []Menu, err error) {
 
 	// var menu Menu
@@ -60,7 +70,7 @@ func getUserChildMenu(uid uint, menuId string) (menu []Menu, err error) {
 	return menu, nil
 }
 
-func GetMenu(uid uint) (menus []Menus, err error){
+func GetUserMenu(uid uint) (menus []Menus, err error){
 
 	userMenus := make([]Menus, 0)
 
@@ -89,6 +99,56 @@ func GetMenu(uid uint) (menus []Menus, err error){
 		// menuTmp.FormatJSON()
 		// jsonbyte,_ := json.Marshal(userMenus)
 		// fmt.Println(string(jsonbyte))
+	}
+	return userMenus, nil
+}
+
+
+//获取一级菜单
+func getPartentMenu() (menu []PermissionMenu, err error) {
+
+	if err := global.RY_DB.Table("menus").Where("menu_type = 0 ").Find(&menu).Error; err!= nil{
+		return menu, errors.New("not found Permissions")
+	}
+
+	return menu, nil
+
+}
+
+//获取一级菜单的子菜单
+func getChildMenu(menuId string) (menu []PermissionMenu, err error) {
+
+
+	if err := global.RY_DB.Table("menus").Where("menu_type = 1 and parent_id = (?)", menuId).Find(&menu).Error; err!= nil{
+		return menu, errors.New("not found Child Menu")
+	}
+	return menu, nil
+}
+
+
+func GetMenu() (menus []PermissionMenus, err error){
+
+	userMenus := make([]PermissionMenus, 0)
+
+	partentMenu, err := getPartentMenu()
+	if err != nil {
+		return userMenus, errors.New("not found Partent Menu")
+	}
+	for _, menu := range partentMenu{
+
+		childSlice := make([]PermissionMenu, 0)
+		childMenu, err := getChildMenu(menu.MenuId)
+		if err != nil {
+			return userMenus, errors.New("not found Children Menu")
+		}
+		if childMenu != nil {
+			childSlice = append(childSlice, childMenu...)
+		}
+		menuTmp := PermissionMenus{
+			PermissionMenu: menu,
+			Children: childSlice,
+		}
+		userMenus = append(userMenus, menuTmp)
 	}
 	return userMenus, nil
 }

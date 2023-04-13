@@ -52,8 +52,14 @@ func main() {
 	protected := router.Group("/api/admin")
 	protected.Use(middlewares.JwtAuthMiddleware())
 	protected.GET("/user", controller.CurrentUser)
-	protected.GET("/menu", controller.GetMenuList)
-	protected.POST("/asyncMenu", controller.GetMenuList)
+	// protected.POST("/asyncMenu", controller.GetMenuList)
+
+	protectedMenu := router.Group("/menu")
+	{
+		protectedMenu.GET("/allMenu", controller.GetAllMenu)
+		protectedMenu.POST("/asyncMenu", controller.GetMenuList)
+	}
+	protectedMenu.Use(middlewares.JwtAuthMiddleware())
 
 	protectedUser := router.Group("/api/user")
 	{
