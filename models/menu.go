@@ -24,7 +24,7 @@ type Menus struct {
 }
 
 type PermissionMenu struct {
-	Menuname string `json:"menuname"`
+	Menuname string `json:"menuName"`
 	MenuId string 	`json:"menuId"`
 }
 

@@ -15,13 +15,3 @@ type Role_Permissions struct {
 
 
 
-//用户是否含有子菜单
-func IsChildMenu(uid uint) (bool, error) {
-
-	if err := global.RY_DB.Where("user_id =? AND module_id is not null", uid).Find(&Role_Permissions{}).Error; err!= nil {
-        return false, err
-    }
-	return true, nil
-}
-
-

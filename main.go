@@ -58,6 +58,8 @@ func main() {
 	{
 		protectedMenu.GET("/allMenu", controller.GetAllMenu)
 		protectedMenu.POST("/asyncMenu", controller.GetMenuList)
+		protectedMenu.POST("/getUserMenu", controller.GetUserMenuList)
+		protectedMenu.POST("/updateUserMenu", controller.UpdateUserMenu)
 	}
 	protectedMenu.Use(middlewares.JwtAuthMiddleware())
 
