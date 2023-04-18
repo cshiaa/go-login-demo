@@ -3,7 +3,6 @@ package models
 import (
 	
 	"gorm.io/gorm"
-	"github.com/cshiaa/go-login-demo/global"
 )
 
 type Role_Permissions struct {

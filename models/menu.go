@@ -7,6 +7,7 @@ import (
 	"github.com/cshiaa/go-login-demo/global"
 )
 
+
 type Menu struct {
 	gorm.Model
 	Icon string 	`json:"icon" gorm:"size:30;unique"`
@@ -32,6 +33,27 @@ type PermissionMenus struct {
 	PermissionMenu
 	Children []PermissionMenu `json:"children"`
 }
+
+//判断是否为二级菜单
+func (menu *Menu)IsChildrenMenu() bool {
+	return menu.MenuType != 0
+}
+
+//判断是否为一级菜单
+func (menu *Menu)IsParentMenu() bool {
+	return menu.MenuType != 1
+}
+
+
+func GetMenuObject(m []string)(menu []Menu, err error) {
+
+	if err := global.RY_DB.Where("menu_id in (?)", m).Find(&menu).Error; err!= nil{
+		return menu, errors.New("该用户没有找到对应的菜单")
+	}
+
+	return menu, nil
+}
+
 
 func GetMenuID(uid uint) (menu []Menu, err error) {
 
@@ -152,3 +174,4 @@ func GetMenu() (menus []PermissionMenus, err error){
 	}
 	return userMenus, nil
 }
+
