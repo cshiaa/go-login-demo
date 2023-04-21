@@ -17,7 +17,7 @@ storage:
     type: local
 zap:
     filename: ./log/cshiaa.log
-    level: INFO
+    level: Info
     maxage: 30
     maxbackups: 3
     maxsize: 10

@@ -20,7 +20,8 @@ import (
 
 // InitLogger 初始化Logger
 func InitLogger() (err error) {
-	writeSyncer := internal.GetLogWriter()
+	// writeSyncer := internal.GetLogWriter()
+	writeSyncer := internal.GetLogStdOutWriter()
 	encoder := internal.GetEncoder()
 	var level = new(zapcore.Level)
 	err = level.UnmarshalText([]byte(global.RY_CONFIG.Zap.Level))

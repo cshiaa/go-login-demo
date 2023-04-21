@@ -11,6 +11,10 @@ import (
 	"github.com/cshiaa/go-login-demo/utils/tools"
 )
 
+type NewMenuPermissions struct {
+	Menus []string	`json:"menusList"`
+}
+
 //根据请求中携带的token获取用户菜单列表
 func GetMenuList(c *gin.Context){
 
@@ -89,7 +93,6 @@ func GetUserMenuList(c *gin.Context) {
 
 }
 
-
 //更新用户的菜单权限
 func UpdateUserMenu(c *gin.Context) {
 
@@ -97,24 +100,47 @@ func UpdateUserMenu(c *gin.Context) {
 	uidInt, _ := strconv.Atoi(uid)
 	uidUint := uint(uidInt)
 
-	var newUserMenus  = []string{"5", "4", "1", "2"}
+	// var newUserMenus  = []string{"5", "4", "1", "2"}
+	var newMenu = NewMenuPermissions{}
+	if err := c.ShouldBindJSON(&newMenu); err!= nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+	}
 
 	// newMenus, err := models.GetMenuObject(menus)
 	// if err != nil {
 	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	// 	return
 	// }
-	
+
 
 	srcUserMenus, err :=  getUserMenuId(uidUint)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	addMenus, delMenus := tools.Arrcmp[string](srcUserMenus, newMenu.Menus)
+	
+	addMenuObjectList, _ := models.GetMenuObject(addMenus)
+	for _, m := range addMenuObjectList {
+		var role = models.RolePermissions{}
+		err := role.Insert(uidUint, m)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+	}
 
-	addMenus, delMenus := tools.Arrcmp[string](srcUserMenus, newUserMenus)
+	delMenuObjectList, _ := models.GetMenuObject(delMenus)
+	for _, m := range delMenuObjectList {
+		var role = models.RolePermissions{}
+		err := role.Delete(uidUint, m)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+	}
 
-
-	c.JSON(http.StatusOK, gin.H{"message":"success","addMenuList": addMenus, "delMenuList": delMenus  })
+	c.JSON(http.StatusOK, gin.H{"message":"success","addMenuList": addMenus, "delMenuList": delMenus, "newUserMenus":newMenu })
 
 }

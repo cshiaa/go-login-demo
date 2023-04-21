@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"os"
 
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
@@ -28,4 +29,9 @@ func GetLogWriter() zapcore.WriteSyncer {
 		MaxAge:     global.RY_CONFIG.Zap.MaxAge,
 	}
 	return zapcore.AddSync(lumberJackLogger)
+}
+
+
+func GetLogStdOutWriter() zapcore.WriteSyncer {
+	return zapcore.AddSync(os.Stdout)
 }
