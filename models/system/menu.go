@@ -15,12 +15,12 @@ type Menu struct {
 	MenuId 			string 				`json:"menuId" gorm:"size:10; not null`
 	ParentId 		string     			`json:"parentId" gorm:"size:10; not null"`
 	Name 			string 				`json:"name" gorm:"size:20; not null"`
-	// Meta          						`json:"meta" gorm:"embedded;comment:附加属性"`                            // 附加属性
+	Meta          						`json:"meta" gorm:"embedded;comment:附加属性"`                       // 附加属性
 	Children      	[]Menu          	`json:"children" gorm:"-"`
 }
 
 type Meta struct {
-	Title       string `json:"title" gorm:"comment:菜单名"`                       // 菜单名
+	Title       	string 				`json:"title" gorm:"comment:菜单名"`                      	 		// 菜单名
 }
 
 //判断是否为二级菜单

@@ -7,6 +7,7 @@ import (
 	"github.com/cshiaa/go-login-demo/source/system"
 
 	"github.com/cshiaa/go-login-demo/utils"
+	"github.com/cshiaa/go-login-demo/common/response"
 )
 
 
@@ -31,11 +32,15 @@ func Login(c *gin.Context) {
 
 	atoken, rtoken, err := system.LoginCheck(u.Username, u.Password)
 	if err!= nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Username or password is incorrect"})
-            return
+		response.FailWithMessage("密码错误", c)
+		// c.JSON(http.StatusBadRequest, gin.H{"error": "Username or password is incorrect"})
+        return
 	}
-
-	c.JSON(http.StatusOK, gin.H{"atoken": atoken, "rtoken": rtoken})
+	token := make(map[string]interface{})
+	token["atoken"] = atoken
+	token["rtoken"] = rtoken
+	response.SuccessWithDetailed(token, "登录成功", c)
+	// c.JSON(http.StatusOK, gin.H{"atoken": atoken, "rtoken": rtoken})
 }
 
 func CurrentUser(c *gin.Context){

@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"github.com/gin-gonic/gin"
 	"github.com/cshiaa/go-login-demo/models/system"
+	"github.com/cshiaa/go-login-demo/common/response"
+
 )
 
 type RegisterInput struct {
@@ -16,6 +18,7 @@ func Register(c *gin.Context) {
 
 	var input RegisterInput
 	if err := c.ShouldBindJSON(&input); err!= nil {
+		response.FailWithMessage("解析用户数据报错", c)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         return
 	}
@@ -26,15 +29,14 @@ func Register(c *gin.Context) {
 	u.Password = input.Password
 
 	if err := u.BeforeSave(); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		response.FailWithMessage("注册的用户信息有误", c)
         return
     }
 
 	_, err := u.SaveUser()
 	if err!= nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		response.FailWithMessage("用户保存失败", c)
         return
     }
-
-	c.JSON(http.StatusOK, gin.H{"message": "register success!"})
+	response.SuccessWithMessage("注册成功", c)
 }

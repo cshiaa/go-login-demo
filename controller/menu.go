@@ -10,6 +10,7 @@ import (
 	"github.com/cshiaa/go-login-demo/utils/tools"
 	systemModel "github.com/cshiaa/go-login-demo/models/system"
 	"github.com/cshiaa/go-login-demo/source/system"
+	"github.com/cshiaa/go-login-demo/common/response"
 )
 
 type NewMenuPermissions struct {
@@ -24,13 +25,13 @@ func GetMenuList(c *gin.Context){
 
 	uid, err := utils.ExtractTokenID(c)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		response.FailWithMessage("Token解析用户失败", c)
 		return
 	}
 
 	menu, err := system.GetUserMenu(uid, partenId)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		response.FailWithMessage("用户获取菜单列表失败", c)
 		return
 	}
 
@@ -42,7 +43,7 @@ func GetMenu(c *gin.Context) {
 
 	menu, err := system.GetAllMenu(partenId)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		response.FailWithMessage("获取所有菜单列表失败", c)
 		return
 	}
 
@@ -59,7 +60,7 @@ func GetUserMenuList(c *gin.Context) {
 	
 	userChildMenus, err :=  system.GetUserChildRoleMenuID(uidUint)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		response.FailWithMessage("用户获取子菜单失败", c)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message":"success","userChildMenus": userChildMenus})
@@ -75,16 +76,17 @@ func UpdateUserMenu(c *gin.Context) {
 
 	var newMenu = NewMenuPermissions{}
 	if err := c.ShouldBindJSON(&newMenu); err!= nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		response.FailWithMessage("解析请求更新的菜单列表报错", c)
         return
 	}
 
 	userMenuIds, err := system.GetUserRoleMenuID(uidUint)
-	srcUserMenus := tools.DuplicateRemovingMap[string](userMenuIds)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		response.FailWithMessage("获取用户菜单ID列表失败", c)
 		return
 	}
+
+	srcUserMenus := tools.DuplicateRemovingMap[string](userMenuIds)
 	addMenus, delMenus := tools.Arrcmp[string](srcUserMenus, newMenu.Menus)
 
 	addMenuObjectList, _ := system.GetMenuObject(addMenus)
@@ -92,7 +94,7 @@ func UpdateUserMenu(c *gin.Context) {
 		var role = systemModel.RolePermissions{}
 		err := role.Insert(uidUint, m)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			response.FailWithMessage("用户添加菜单权限失败", c)
 			return
 		}
 	}
@@ -102,11 +104,11 @@ func UpdateUserMenu(c *gin.Context) {
 		var role = systemModel.RolePermissions{}
 		err := role.Delete(uidUint, m)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			response.FailWithMessage("用户删除菜单权限失败", c)
 			return
 		}
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message":"success" })
+	response.SuccessWithMessage("更新菜单权限成功", c)
 
 }
