@@ -3,7 +3,7 @@ package controller
 import (
 	"net/http"
 	"github.com/gin-gonic/gin"
-	"github.com/cshiaa/go-login-demo/models"
+	"github.com/cshiaa/go-login-demo/models/system"
 )
 
 type RegisterInput struct {
@@ -20,10 +20,15 @@ func Register(c *gin.Context) {
         return
 	}
 
-	u := models.User{}
+	u := system.User{}
 
 	u.Username = input.Username
 	u.Password = input.Password
+
+	if err := u.BeforeSave(); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
 
 	_, err := u.SaveUser()
 	if err!= nil {

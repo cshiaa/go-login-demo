@@ -1,12 +1,10 @@
 package tools
 
-import (
-	"github.com/cshiaa/go-login-demo/models"
-)
 
-//两个数组 一个原始数组 一个新的数组 
+
+//两个数组 一个原始数组 一个新的数组
 //函数返回原始数组需要新增的元素和删除的元素
-func Arrcmp[T int|string|models.Menu ](src []T, dest []T) ([]T, []T) {
+func Arrcmp[T int|string ](src []T, dest []T) ([]T, []T) {
 	msrc := make(map[T]byte) //按源数组建索引
 	mall := make(map[T]byte) //源+目所有元素建索引
 
@@ -41,6 +39,6 @@ func Arrcmp[T int|string|models.Menu ](src []T, dest []T) ([]T, []T) {
 			added = append(added, v)
 		}
 	}
-
+	
 	return added, deleted
 }

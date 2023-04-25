@@ -4,27 +4,31 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/cshiaa/go-login-demo/models"
 	"github.com/gin-gonic/gin"
 
 	"github.com/cshiaa/go-login-demo/utils"
 	"github.com/cshiaa/go-login-demo/utils/tools"
+	systemModel "github.com/cshiaa/go-login-demo/models/system"
+	"github.com/cshiaa/go-login-demo/source/system"
 )
 
 type NewMenuPermissions struct {
 	Menus []string	`json:"menusList"`
 }
 
+//一级菜单父ID为0
+var partenId string = "0"
+
 //根据请求中携带的token获取用户菜单列表
 func GetMenuList(c *gin.Context){
 
-	userId, err := utils.ExtractTokenID(c)
+	uid, err := utils.ExtractTokenID(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	menu, err := models.GetUserMenu(userId)
+	menu, err := system.GetUserMenu(uid, partenId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -34,9 +38,9 @@ func GetMenuList(c *gin.Context){
 }
 
 //获取目前所有的菜单列表
-func GetAllMenu(c *gin.Context) {
+func GetMenu(c *gin.Context) {
 
-	menu, err := models.GetMenu()
+	menu, err := system.GetAllMenu(partenId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -46,37 +50,6 @@ func GetAllMenu(c *gin.Context) {
 
 }
 
-//对用户拥有的菜单列表格式化处理，只返回已拥有的菜单权限的menuid列表
-//这里只返回了子菜单的权限列表
-func getMenuId(menu []models.Menus) (idList []string, err error) {
-	
-	for _, m := range menu {
-		// idList = append(idList, m.MenuId)
-		if len(m.Children) > 0 {
-			for _, childm := range m.Children {
-				idList = append(idList, childm.MenuId)
-			}
-		}
-	}
-	return idList, nil
-}
-
-//获取用户的菜单ID
-func getUserMenuId(uid uint) (menuId []string, err error) {
-
-
-	menu, err := models.GetUserMenu(uid)
-	if err != nil {
-		return nil, err
-	}
-
-	menuId, err = getMenuId(menu)
-	if err != nil {
-		return nil, err
-	}
-	return menuId, nil
-}
-
 //获取用户的菜单列表
 func GetUserMenuList(c *gin.Context) {
 
@@ -84,12 +57,12 @@ func GetUserMenuList(c *gin.Context) {
 	uidInt, _ := strconv.Atoi(uid)
 	uidUint := uint(uidInt)
 	
-	userMenuIdList, err :=  getUserMenuId(uidUint)
+	userChildMenus, err :=  system.GetUserChildRoleMenuID(uidUint)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message":"success","userMenuList": userMenuIdList})
+	c.JSON(http.StatusOK, gin.H{"message":"success","userChildMenus": userChildMenus})
 
 }
 
@@ -100,30 +73,23 @@ func UpdateUserMenu(c *gin.Context) {
 	uidInt, _ := strconv.Atoi(uid)
 	uidUint := uint(uidInt)
 
-	// var newUserMenus  = []string{"5", "4", "1", "2"}
 	var newMenu = NewMenuPermissions{}
 	if err := c.ShouldBindJSON(&newMenu); err!= nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         return
 	}
 
-	// newMenus, err := models.GetMenuObject(menus)
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	// 	return
-	// }
-
-
-	srcUserMenus, err :=  getUserMenuId(uidUint)
+	userMenuIds, err := system.GetUserRoleMenuID(uidUint)
+	srcUserMenus := tools.DuplicateRemovingMap[string](userMenuIds)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	addMenus, delMenus := tools.Arrcmp[string](srcUserMenus, newMenu.Menus)
-	
-	addMenuObjectList, _ := models.GetMenuObject(addMenus)
+
+	addMenuObjectList, _ := system.GetMenuObject(addMenus)
 	for _, m := range addMenuObjectList {
-		var role = models.RolePermissions{}
+		var role = systemModel.RolePermissions{}
 		err := role.Insert(uidUint, m)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -131,9 +97,9 @@ func UpdateUserMenu(c *gin.Context) {
 		}
 	}
 
-	delMenuObjectList, _ := models.GetMenuObject(delMenus)
+	delMenuObjectList, _ := system.GetMenuObject(delMenus)
 	for _, m := range delMenuObjectList {
-		var role = models.RolePermissions{}
+		var role = systemModel.RolePermissions{}
 		err := role.Delete(uidUint, m)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -141,6 +107,6 @@ func UpdateUserMenu(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message":"success","addMenuList": addMenus, "delMenuList": delMenus, "newUserMenus":newMenu })
+	c.JSON(http.StatusOK, gin.H{"message":"success" })
 
 }

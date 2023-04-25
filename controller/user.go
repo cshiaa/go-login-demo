@@ -3,13 +3,13 @@ package controller
 import (
 	"net/http"
 	"github.com/gin-gonic/gin"
-	"github.com/cshiaa/go-login-demo/models"
+	"github.com/cshiaa/go-login-demo/source/system"
 )
 
 func GetUserList(c *gin.Context){
 
 
-	users, err := models.GetAllUser()
+	users, err := system.GetAllUser()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

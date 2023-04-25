@@ -3,7 +3,8 @@ package controller
 import (
 	"net/http"
 	"github.com/gin-gonic/gin"
-	"github.com/cshiaa/go-login-demo/models"
+	systemModel "github.com/cshiaa/go-login-demo/models/system"
+	"github.com/cshiaa/go-login-demo/source/system"
 
 	"github.com/cshiaa/go-login-demo/utils"
 )
@@ -23,12 +24,12 @@ func Login(c *gin.Context) {
             return
     }
 
-	u := models.User{}
+	u := systemModel.User{}
 
 	u.Username = input.Username
 	u.Password = input.Password
 
-	atoken, rtoken, err := models.LoginCheck(u.Username, u.Password)
+	atoken, rtoken, err := system.LoginCheck(u.Username, u.Password)
 	if err!= nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Username or password is incorrect"})
             return
@@ -46,7 +47,7 @@ func CurrentUser(c *gin.Context){
 		return
 	}
 	
-	u,err := models.GetUserByID(user_id)
+	u,err := system.GetUserByID(user_id)
 	
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
