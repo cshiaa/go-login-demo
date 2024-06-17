@@ -7,7 +7,7 @@ kubernetes:
 mysql:
     dbname: cshiaa
     dirver: mysql
-    host: 19.224.154.190
+    host: 1.15.70.113
     password: cshiaa
     port: "3306"
     username: cshiaa
